@@ -1,45 +1,93 @@
 import './Eventos.css'
-import { useNavigate } from 'react-router-dom';
+
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from "../services/api"
 
-import { logout } from '../services/auth';
+import { getToken, logout } from '../services/auth';
 
 
 
 const Eventos = () => {
 
   const [eventos, setEventos] = useState([])
-  const navigate = useNavigate()
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [idToDelete, setIdToDelete] = useState('')
 
 
-  api
-    .get("eventos_diarios")
-    .then((response) => setEventos(response.data))
-    .catch((err) => {
-      console.error("ops! ocorreu um erro" + err);
-    });
+  const getAllEvents = () => {
 
 
-    const handleExit = () => {
-       
-        logout()
+    api
+      .get("eventos_diarios")
+      .then((response) => setEventos(response.data))
+      .catch((err) => {
+        console.error("ops! ocorreu um erro" + err);
+      });
 
-        navigate('/')
-    }
+
+  }
+
+  useEffect(() => {
+    getAllEvents()
+  }, [])
+
+
+
+
+  const handleDelete = () => {
+    const config = {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    };
+
+    api.delete(`eventos_diarios/${idToDelete}`, config).then((response) => {
+      getAllEvents()
+    })
+
+    setConfirmModal(false)
+
+  }
+
+
+  const handleEdit = () => {
+
+  }
+
+  const handleCreate = () => {
+
+  }
+
+
+
+
+
+
+  const handleExit = () => {
+
+    logout()
+
+    window.location.reload()
+  }
 
   return (
     <div className="styles.eventos eventos mx-auto w-75 ">
 
-      <button onClick={handleExit} className='btn btn-danger'>Sair</button>
+
+
+      <div className="d-flex justify-content-between">
+        <button onClick={handleExit} className='btn btn-danger'>Sair</button>
+        <button onClick={''} className='btn btn-success' >Cadastrar</button>
+      </div>
+
+
+
 
       <h3 className="text-center mb-4">Página de Eventos</h3>
 
-      {eventos.map((evento) => {
+      {eventos.map((evento, index) => {
         return (
-          <div>
+          <div key={index}>
 
             <table className="table">
               <thead>
@@ -60,10 +108,19 @@ const Eventos = () => {
                   <td>{evento.cor}</td>
                   <td >
 
-                    <FontAwesomeIcon icon={faTrash} className="mx-4" />
+
+
+                    <FontAwesomeIcon type='button' icon={faTrash} className="mx-4"
+                      onClick={() => {
+                        setConfirmModal(true)
+                        setIdToDelete(evento.id)
+                      }}
+                    />
+
+
                     <FontAwesomeIcon icon={faEdit} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" />
 
-                    <div className="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div className="modal-dialog" role="document">
                         <div className="modal-content">
                           <div className="modal-header">
@@ -93,6 +150,31 @@ const Eventos = () => {
         )
       })}
 
+
+      {confirmModal &&
+        <div className='confirm-modal' >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Deletar Evento</h5>
+                <button type="button" className="btn-close"
+                  onClick={() => setConfirmModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>Voçê deseja excluir!</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary"
+                  onClick={() => setConfirmModal(false)}
+                >Cancelar</button>
+                <button type="button" className="btn btn-primary"
+                  onClick={handleDelete}
+                >Confirmar</button>
+              </div>
+            </div>
+          </div>
+        </div>}
 
     </div>
   );

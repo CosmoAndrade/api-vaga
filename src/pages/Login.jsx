@@ -6,13 +6,15 @@ import api from '../services/api';
 
 import { login } from '../services/auth';
 
+// 'adm@email.com'
+// '123123'
 
 
 const Login = () => {
 
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
-    const navigate = useNavigate()
+  
 
 
     const handleSubmit = (e) => {
@@ -24,10 +26,10 @@ const Login = () => {
 
         api.post('/login/adm', data)
             .then((response) => {
-                login(response.data)
-                navigate('/eventos')
+                login(response.data.token)
+                window.location.reload()
              } )
-             .catch((response) => alert(response))
+             .catch((response) => console.log(response))
 
 
     }
