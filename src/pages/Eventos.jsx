@@ -1,5 +1,5 @@
 import './Eventos.css'
-
+import { NavLink } from "react-router-dom";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from 'react';
@@ -18,22 +18,17 @@ const Eventos = () => {
 
   const getAllEvents = () => {
 
-
     api
       .get("eventos_diarios")
       .then((response) => setEventos(response.data))
       .catch((err) => {
         console.error("ops! ocorreu um erro" + err);
       });
-
-
   }
 
   useEffect(() => {
     getAllEvents()
   }, [])
-
-
 
 
   const handleDelete = () => {
@@ -59,10 +54,6 @@ const Eventos = () => {
   }
 
 
-
-
-
-
   const handleExit = () => {
 
     logout()
@@ -71,13 +62,15 @@ const Eventos = () => {
   }
 
   return (
-    <div className="styles.eventos eventos mx-auto w-75 ">
-
-
+    <div className=" eventos mx-auto w-75 ">
 
       <div className="d-flex justify-content-between">
         <button onClick={handleExit} className='btn btn-danger'>Sair</button>
-        <button onClick={''} className='btn btn-success' >Cadastrar</button>
+
+        <NavLink to="/cadastrar">
+          <button onClick={''} className='btn btn-success' >Cadastrar</button>
+        </NavLink>
+
       </div>
 
 
@@ -125,13 +118,9 @@ const Eventos = () => {
                         <div className="modal-content">
                           <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel">Editar Eventos</h5>
-                            <div className="close" data-dismiss="modal" aria-label="Close">
 
-                              <FontAwesomeIcon icon={faTrash} aria-hidden="true" className="mx-4 btn btn-danger" />
-                            </div>
                           </div>
                           <div className="modal-body">
-                            <input className="form-control mb-3" type="text" placeholder='Título' />
                             <input className="form-control" type="text" placeholder='Descrição' />
                           </div>
                           <div className="modal-footer">

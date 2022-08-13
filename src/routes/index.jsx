@@ -4,6 +4,7 @@ import Login from '../pages/Login'
 import Eventos from "../pages/Eventos";
 import Navbar from "../components/NavBar";
 import { isAuthenticated } from "../services/auth";
+import Cadastrar from "../pages/Cadastrar";
 
 const ProtectedRoute = ({ logged, children, redirect }) => {
     if (!logged) {
@@ -21,14 +22,16 @@ const Rotas = () => {
 
             <Routes>
 
+
+
                 <Route
                     path="/"
                     element={<ProtectedRoute
                         logged={!isAuthenticated()}
-                        children={<Login />} 
+                        children={<Login />}
                         redirect="/eventos"
-                        />}
-                   
+                    />}
+
                 />
 
 
@@ -38,7 +41,18 @@ const Rotas = () => {
                         redirect="/"
                     />}
                 />
+
+
+
+                <Route
+                    path="/cadastrar"
+                    element={<ProtectedRoute logged={isAuthenticated()} children={<Cadastrar />}
+                        redirect="/"
+                    />}
+                />
             </Routes>
+
+
 
 
         </BrowserRouter>
