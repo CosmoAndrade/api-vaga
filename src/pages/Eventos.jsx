@@ -14,6 +14,8 @@ const Eventos = () => {
   const [eventos, setEventos] = useState([])
   const [confirmModal, setConfirmModal] = useState(false)
   const [idToDelete, setIdToDelete] = useState('')
+  const [idToEdit, setIdToEdit] = useState('')
+  const [edit , setEdit] = useState('')
 
 
   const getAllEvents = () => {
@@ -46,12 +48,17 @@ const Eventos = () => {
 
 
   const handleEdit = () => {
-
+    const config = {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    };
+      const request = {
+        descricao: edit
+      }
+    api.put(`eventos_diarios/${idToEdit}`, request, config).then((response) => {
+      getAllEvents()
+    })
   }
 
-  const handleCreate = () => {
-
-  }
 
 
   const handleExit = () => {
@@ -68,7 +75,7 @@ const Eventos = () => {
         <button onClick={handleExit} className='btn btn-danger'>Sair</button>
 
         <NavLink to="/cadastrar">
-          <button onClick={''} className='btn btn-success' >Cadastrar</button>
+          <button className='btn btn-success' >Cadastrar</button>
         </NavLink>
 
       </div>
@@ -100,7 +107,7 @@ const Eventos = () => {
                   <td>{evento.data}</td>
                   <td>{evento.cor}</td>
                   <td >
-
+                  
 
 
                     <FontAwesomeIcon type='button' icon={faTrash} className="mx-4"
@@ -111,7 +118,7 @@ const Eventos = () => {
                     />
 
 
-                    <FontAwesomeIcon icon={faEdit} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" />
+                    <FontAwesomeIcon icon={faEdit} onClick={() => setIdToEdit(evento.id)} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" />
 
                     <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div className="modal-dialog" role="document">
@@ -121,11 +128,16 @@ const Eventos = () => {
 
                           </div>
                           <div className="modal-body">
-                            <input className="form-control" type="text" placeholder='Descrição' />
+                            <input className="form-control" 
+                            type="text"
+                             placeholder='Descrição'
+                             value={edit}
+                             onChange={(e) => setEdit(e.target.value)}
+                              />
                           </div>
                           <div className="modal-footer">
                             <button type="button" className="btn btn-danger" data-dismiss="modal">Sair</button>
-                            <button type="button" className="btn btn-primary">Editar eventos</button>
+                            <button onClick={handleEdit} type="button" data-dismiss="modal" className="btn btn-primary">Editar eventos</button>
                           </div>
                         </div>
                       </div>
